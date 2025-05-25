@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel SmashLovers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #ffffff;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #0f172a;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar h4 {
+      padding: 20px;
+      margin: 0;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: #f97316;
+      color: black;
+      border-bottom: 1px solid #1e2a47;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 15px 20px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #1e2a47;
+    }
+
+    .content {
+      margin-left: 220px;
+      padding: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menu lateral -->
+  <div class="sidebar">
+    <h4>Painel</h4>
+    <a href="index.html">Início</a>
+    <a href="#">Pedidos</a>
+
+    <div style="border-top: 1px solid #1e2a47; margin-top: 10px;">
+      <span style="font-weight: bold; color: #f97316; padding: 15px 20px; display: block;">Cardápio</span>
+      <a href="produtos.html" style="padding-left: 30px;">Produtos</a>
+      <a href="categorias.html" style="padding-left: 30px;">Categorias</a>
+      <a href="complementos.html" style="padding-left: 30px;">Complementos</a>
+      <a href="filtros.html" style="padding-left: 30px;">Filtros Avançados</a>
+    </div>
+
+    <a href="#">Cupons</a>
+    <a href="#">Entregas</a>
+    <a href="#">Caixa</a>
+  </div>
+
+  <!-- CONTEÚDO DA PÁGINA -->
+  <div class="content">
+    <h2 class="mb-4">Título da Página</h2>
+    <p>Adicione aqui o conteúdo específico desta página.</p>
+  </div>
+
+</body>
+</html>
