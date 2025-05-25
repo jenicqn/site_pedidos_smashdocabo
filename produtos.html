@@ -45,5 +45,91 @@
   </style>
 </head>
 <body>
+  <div class="sidebar">
+    <h4>Painel</h4>
+    <a href="portal.html">Início</a>
+    <a href="produtos.html" class="active">Produtos</a>
+    <a href="#">Categorias</a>
+    <a href="#">Pedidos</a>
+    <a href="#">Cupons</a>
+    <a href="#">Entregas</a>
+    <a href="#">Caixa</a>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Gestão de Produtos</h2>
+      <a href="novo-produto.html" class="btn btn-success">+ Novo Produto</a>
+    </div>
+
+    <table class="table table-striped table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Imagem</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Categoria</th>
+          <th>Preço</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="produtos-lista"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://oyoirjgfwsvtfmsvecfd.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95b2lyamdmd3N2dGZtc3ZlY2ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyMTI3NjMsImV4cCI6MjA2Mzc4ODc2M30.s6MkXu1bGKgGsQj6ovea9d9bfOwRi-4sitHdCJb08G8'
+    );
+
+    async function carregarProdutos() {
+      const { data, error } = await supabase
+        .from('produtos')
+        .select('*')
+        .order('id', { ascending: false });
+
+      const tbody = document.getElementById('produtos-lista');
+      tbody.innerHTML = '';
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="6">Erro ao carregar produtos.</td></tr>`;
+        return;
+      }
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6">Nenhum produto cadastrado.</td></tr>`;
+        return;
+      }
+
+      data.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><img src="${p.imagem_url || 'https://via.placeholder.com/80'}" width="80" height="80" style="border-radius: 8px; object-fit: cover;"></td>
+          <td>${p.nome}</td>
+          <td>${p.descricao || ''}</td>
+          <td>${p.categoria || '-'}</td>
+          <td>R$ ${parseFloat(p.preco).toFixed(2)}</td>
+          <td>
+            <a href="editar-produto.html?id=${p.id}" class="btn btn-sm btn-warning me-1">Editar</a>
+            <button class="btn btn-sm btn-danger" onclick="excluirProduto(${p.id})">Excluir</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function excluirProduto(id) {
+      if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+      await supabase.from('produtos').delete().eq('id', id);
+      carregarProdutos();
+    }
+
+    carregarProdutos();
+  </script>
+
+</body>
+</html>
 
   <!-- Sidebar -
