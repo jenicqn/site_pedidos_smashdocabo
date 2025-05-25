@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Categorias</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { background-color: #f4f4f4; }
+    .sidebar {
+      width: 220px;
+      background-color: #0f172a;
+      color: white;
+      min-height: 100vh;
+      position: fixed;
+    }
+    .sidebar h4 {
+      padding: 20px;
+      margin: 0;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: #f97316;
+      color: black;
+    }
+    .sidebar a {
+      display: block;
+      padding: 15px 20px;
+      color: white;
+      text-decoration: none;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #1e2a47;
+    }
+    .content {
+      margin-left: 220px;
+      padding: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h4>Painel</h4>
+    <a href="portal.html">Início</a>
+    <a href="#">Pedidos</a>
+
+    <div style="border-top: 1px solid #1e2a47; margin-top: 10px;">
+      <a href="#" style="pointer-events: none; font-weight: bold; color: #f97316; padding-left: 20px;">Cardápio</a>
+      <a href="produtos.html" style="padding-left: 30px;">Produtos</a>
+      <a href="categorias.html" style="padding-left: 30px;" class="active">Categorias</a>
+      <a href="complementos.html" style="padding-left: 30px;">Complementos</a>
+      <a href="filtros.html" style="padding-left: 30px;">Filtros Avançados</a>
+    </div>
+
+    <a href="#">Cupons</a>
+    <a href="#">Entregas</a>
+    <a href="#">Caixa</a>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Categorias</h2>
+      <button class="btn btn-success" onclick="novaCategoria()">+ Nova Categoria</button>
+    </div>
+
+    <table class="table table-striped table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Nome</th>
+          <th>Ordem</th>
+          <th>Visível</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="lista-categorias"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://oyoirjgfwsvtfmsvecfd.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95b2lyamdmd3N2dGZtc3ZlY2ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyMTI3NjMsImV4cCI6MjA2Mzc4ODc2M30.s6MkXu1bGKgGsQj6ovea9d9bfOwRi-4sitHdCJb08G8'
+    );
+
+    async function carregarCategorias() {
+      const { data, error } = await supabase
+        .from('categorias')
+        .select('*')
+        .order('ordem', { ascending: true });
+
+      const tbody = document.getElementById('lista-categorias');
+      tbody.innerHTML = '';
+
+      if (error) {
+        tbody.innerHTML = '<tr><td colspan="4">Erro ao carregar categorias.</td></tr>';
+        return;
+      }
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4">Nenhuma categoria cadastrada.</td></tr>';
+        return;
+      }
+
+      data.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${c.nome}</td>
+          <td>${c.ordem ?? '-'}</td>
+          <td>${c.visivel ? 'Sim' : 'Não'}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-1" onclick="editarCategoria(${c.id})">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="excluirCategoria(${c.id})">Excluir</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function excluirCategoria(id) {
+      if (!confirm('Tem certeza que deseja excluir esta categoria?')) return;
+      await supabase.from('categorias').delete().eq('id', id);
+      carregarCategorias();
+    }
+
+    function novaCategoria() {
+      const nome = prompt("Nome da nova categoria:");
+      if (!nome) return;
+
+      const ordem = prompt("Ordem (número):", "0");
+      const visivel = confirm("Esta categoria será visível no cardápio?");
+
+      supabase.from('categorias').insert([{ nome, ordem: parseInt(ordem), visivel }])
+        .then(() => carregarCategorias());
+    }
+
+    function editarCategoria(id) {
+      alert('Funcionalidade de edição será criada em breve.');
+    }
+
+    carregarCategorias();
+  </script>
+</body>
+</html>
